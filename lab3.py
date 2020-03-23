@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import scipy.stats
 x1min = -15
 x1max = 30
 x2min = 30
@@ -86,17 +87,23 @@ print("d1=", round(d1,2),"d2=", round(d2,2),"d3=", round(d3,2),"d4=", round(d4,2
 
 dcouple = [d1, d2, d3, d4]
 
+print("Критерій Кохрена:")
 # Рівень значимості приймемо 0.05
-m = 3
 Gp = max(dcouple)/sum(dcouple)
+q = 0.05
+m = 3
 f1 = m-1
 f2 = N = 4
+# для q = 0.05, f1 = 2, f2 = 4, Gt = 0.7679
 Gt = 0.7679
+print("Gp = ", round(Gp, 4))
+print("Gt = ", round(Gt, 4))
 if Gp < Gt:
-    print("Дисперсія однорідна")
+    print("Gp < Gt, дисперсія однорідна")
 else:
-    print("Дисперсія  неоднорідна")
-print("Критерій Стьюдента")
+    print("Gp > Gt, дисперсія  неоднорідна")
+
+print("Критерій Стьюдента:")
 sb = sum(dcouple)/N
 ssbs = sb/N*m
 sbs = ssbs**0.5
@@ -113,8 +120,9 @@ t3 = abs(beta3)/sbs
 
 
 f3 = f1*f2
-ttabl  = 2.306
-print("f3 = f1*f2, з таблиці tтабл = 2.306")
+# t_tab = 2.306  # для значення f3 = 8, t табличне = 2,306
+ttabl  = scipy.stats.t.ppf((1 + (1-q))/2, f3)
+print("f3 = f1*f2, з таблиці tтабл =", round(ttabl,2))
 if (t0<ttabl):
     print("t0<ttabl, b0 не значимий")
     b0=0
@@ -132,18 +140,19 @@ yy1 = b0 + b1*x1min + b2*x2min + b3*x3min
 yy2 = b0 + b1*x1min + b2*x2max + b3*x3max
 yy3 = b0 + b1*x1max + b2*x2min + b3*x3max
 yy4 = b0 + b1*x1max + b2*x2max + b3*x3min
-print("Критерій Фішера")
+
+print("Критерій Фішера:")
 # Рівень значимості приймемо 0.05
 d = 2
-print(d," значимих коефіцієнтів")
 f4 = N - d
 sad = ((yy1 - y1av1)**2 + (yy2 - y2av2)**2 + (yy3 - y3av3)**2 + (yy4 - y4av4)**2)*(m/(N-d))
 Fp = sad/sb
-print("d1=", round(d1,2), "d2=", round(d2,2), "d3=", round(d3,2), "d4=", round(d4,2), "d5=", round(sb,2))
-print("Fp=", round(Fp,2))
-print('Ft берем із таблиці 8 рядок 2 стовпець Ft = 4.5')
-Ft=4.5
-if Fp>Ft:
-    print("Fp=",round(Fp,2),">Ft",Ft,"Рівняння неадекватно оригіналу")
+print("d1 =", round(d1,2), "d2=", round(d2,2), "d3=", round(d3,2), "d4=", round(d4,2), "d5=", round(sb,2))
+print("Fp =", round(Fp,2))
+# Ft = 4.5  # для f3=8; f4=2
+Ft = scipy.stats.f.ppf(1 - q, f4, f3)
+print("Ft =",round(Ft,2))
+if Fp > Ft:
+    print("Fp > Ft, рівняння неадекватно оригіналу")
 else:
-    print("Fp=",round(Fp,2),"<Ft",Ft,"Рівняння адекватно оригіналу")
+    print("Fp < Ft, рівняння адекватно оригіналу")
