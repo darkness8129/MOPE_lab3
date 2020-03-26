@@ -88,71 +88,72 @@ print("d1=", round(d1,2),"d2=", round(d2,2),"d3=", round(d3,2),"d4=", round(d4,2
 dcouple = [d1, d2, d3, d4]
 
 print("Критерій Кохрена:")
-# Рівень значимості приймемо 0.05
-Gp = max(dcouple)/sum(dcouple)
-q = 0.05
-m = 3
-f1 = m-1
-f2 = N = 4
-# для q = 0.05, f1 = 2, f2 = 4, Gt = 0.7679
-Gt = 0.7679
-print("Gp = ", round(Gp, 4))
-print("Gt = ", round(Gt, 4))
-if Gp < Gt:
-    print("Gp < Gt, дисперсія однорідна")
-    print("Критерій Стьюдента:")
-    sb = sum(dcouple) / N
-    ssbs = sb / N * m
-    sbs = ssbs ** 0.5
-
-    beta0 = (y1av1 * 1 + y2av2 * 1 + y3av3 * 1 + y4av4 * 1) / N
-    beta1 = (y1av1 * (-1) + y2av2 * (-1) + y3av3 * 1 + y4av4 * 1) / N
-    beta2 = (y1av1 * (-1) + y2av2 * 1 + y3av3 * (-1) + y4av4 * 1) / N
-    beta3 = (y1av1 * (-1) + y2av2 * 1 + y3av3 * 1 + y4av4 * (-1)) / N
-
-    t0 = abs(beta0) / sbs
-    t1 = abs(beta1) / sbs
-    t2 = abs(beta2) / sbs
-    t3 = abs(beta3) / sbs
-
-    f3 = f1 * f2
-    # t_tab = 2.306  # для значення f3 = 8, t табличне = 2,306
-    ttabl = scipy.stats.t.ppf((1 + (1 - q)) / 2, f3)
-    print("f3 = f1*f2, з таблиці tтабл =", round(ttabl, 2))
-    if (t0 < ttabl):
-        print("t0<ttabl, b0 не значимий")
-        b0 = 0
-    if (t1 < ttabl):
-        print("t1<ttabl, b1 не значимий")
-        b1 = 0
-    if (t2 < ttabl):
-        print("t2<ttabl, b2 не значимий")
-        b2 = 0
-    if (t3 < ttabl):
-        print("t3<ttabl, b3 не значимий")
-        b3 = 0
-
-    yy1 = b0 + b1 * x1min + b2 * x2min + b3 * x3min
-    yy2 = b0 + b1 * x1min + b2 * x2max + b3 * x3max
-    yy3 = b0 + b1 * x1max + b2 * x2min + b3 * x3max
-    yy4 = b0 + b1 * x1max + b2 * x2max + b3 * x3min
-
-    print("Критерій Фішера:")
+while (True):
     # Рівень значимості приймемо 0.05
-    d = 2
-    f4 = N - d
-    sad = ((yy1 - y1av1) ** 2 + (yy2 - y2av2) ** 2 + (yy3 - y3av3) ** 2 + (yy4 - y4av4) ** 2) * (m / (N - d))
-    Fp = sad / sb
-    print("d1 =", round(d1, 2), "d2=", round(d2, 2), "d3=", round(d3, 2), "d4=", round(d4, 2), "d5=", round(sb, 2))
-    print("Fp =", round(Fp, 2))
-    # Ft = 4.5  # для f3=8; f4=2
-    Ft = scipy.stats.f.ppf(1 - q, f4, f3)
-    print("Ft =", round(Ft, 2))
-    if Fp > Ft:
-        print("Fp > Ft, рівняння неадекватно оригіналу")
+    Gp = max(dcouple)/sum(dcouple)
+    q = 0.05
+    m = 3
+    f1 = m-1
+    f2 = N = 4
+
+    fisher_value = scipy.stats.f.isf(q /f2, f1, (f2 - 1) * (f2+1))
+    Gt = fisher_value / (fisher_value + (f2 - 1))
+    if Gp < Gt:
+        print("Gp < Gt, дисперсія однорідна")
+        print("Критерій Стьюдента:")
+        sb = sum(dcouple) / N
+        ssbs = sb / N * m
+        sbs = ssbs ** 0.5
+
+        beta0 = (y1av1 * 1 + y2av2 * 1 + y3av3 * 1 + y4av4 * 1) / N
+        beta1 = (y1av1 * (-1) + y2av2 * (-1) + y3av3 * 1 + y4av4 * 1) / N
+        beta2 = (y1av1 * (-1) + y2av2 * 1 + y3av3 * (-1) + y4av4 * 1) / N
+        beta3 = (y1av1 * (-1) + y2av2 * 1 + y3av3 * 1 + y4av4 * (-1)) / N
+
+        t0 = abs(beta0) / sbs
+        t1 = abs(beta1) / sbs
+        t2 = abs(beta2) / sbs
+        t3 = abs(beta3) / sbs
+
+        f3 = f1 * f2
+        # t_tab = 2.306  # для значення f3 = 8, t табличне = 2,306
+        ttabl = scipy.stats.t.ppf((1 + (1 - q)) / 2, f3)
+        print("f3 = f1*f2, з таблиці tтабл =", round(ttabl, 2))
+        if (t0 < ttabl):
+            print("t0<ttabl, b0 не значимий")
+            b0 = 0
+        if (t1 < ttabl):
+            print("t1<ttabl, b1 не значимий")
+            b1 = 0
+        if (t2 < ttabl):
+            print("t2<ttabl, b2 не значимий")
+            b2 = 0
+        if (t3 < ttabl):
+            print("t3<ttabl, b3 не значимий")
+            b3 = 0
+
+        yy1 = b0 + b1 * x1min + b2 * x2min + b3 * x3min
+        yy2 = b0 + b1 * x1min + b2 * x2max + b3 * x3max
+        yy3 = b0 + b1 * x1max + b2 * x2min + b3 * x3max
+        yy4 = b0 + b1 * x1max + b2 * x2max + b3 * x3min
+
+        print("Критерій Фішера:")
+        # Рівень значимості приймемо 0.05
+        d = 2
+        f4 = N - d
+        sad = ((yy1 - y1av1) ** 2 + (yy2 - y2av2) ** 2 + (yy3 - y3av3) ** 2 + (yy4 - y4av4) ** 2) * (m / (N - d))
+        Fp = sad / sb
+        print("d1 =", round(d1, 2), "d2=", round(d2, 2), "d3=", round(d3, 2), "d4=", round(d4, 2), "d5=", round(sb, 2))
+        print("Fp =", round(Fp, 2))
+        # Ft = 4.5  # для f3=8; f4=2
+        Ft = scipy.stats.f.ppf(1 - q, f4, f3)
+        print("Ft =", round(Ft, 2))
+        if Fp > Ft:
+            print("Fp > Ft, рівняння неадекватно оригіналу")
+        else:
+            print("Fp < Ft, рівняння адекватно оригіналу")
+        break
     else:
-        print("Fp < Ft, рівняння адекватно оригіналу")
-else:
-    print("Gp > Gt, дисперсія  неоднорідна, необхідно збільшити кількість дослідів")
+        m+=1
 
 
